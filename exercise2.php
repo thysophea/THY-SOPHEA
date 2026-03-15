@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exercise 1 - Thy Sophea</title>
+  <title>Exercise 2 - Thy Sophea</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -77,18 +77,16 @@
       margin-top: 4px;
     }
     button[type="submit"]:hover { background: #154360; }
-    .result-box {
+    .receipt {
       margin-top: 18px;
       padding: 15px;
-      background: rgba(255,255,255,0.8);
-      border-left: 5px solid #1a5276;
+      background: rgba(233,236,239,0.85);
+      border-left: 5px solid #28a745;
       border-radius: 6px;
       font-size: 14px;
-      line-height: 1.9;
-      color: #333;
+      line-height: 1.8;
     }
-    .result-box .error { color: red; font-weight: bold; }
-    .result-box .total { color: #1a5276; font-weight: bold; font-size: 16px; }
+    .receipt h3 { margin: 10px 0 0 0; color: #28a745; }
     .nav-buttons {
       display: flex;
       justify-content: space-between;
@@ -111,54 +109,61 @@
 
 <div class="navbar">
   <a href="index.php">🏠 Home</a>
-  <a href="exercise1.php" class="active">Exercise 1</a>
-  <a href="exercise2.php">Exercise 2</a>
+  <a href="exercise1.php">Exercise 1</a>
+  <a href="exercise2.php" class="active">Exercise 2</a>
   <a href="exercise3.php">Exercise 3</a>
 </div>
 
 <div class="card">
-  <h2>⚡ Exercise 1 — Electricity Bill Calculator</h2>
+  <h2>⚡ Exercise 2 — Electric Bill Calculator</h2>
 
-  <form method="POST">
-    <input type="hidden" name="ex1_submit" value="1">
-    <label>Old Number (Kw):</label>
-    <input type="number" name="oldnumber" required
-           value="<?= isset($_POST['oldnumber']) ? htmlspecialchars($_POST['oldnumber']) : '' ?>">
-    <label>New Number (Kw):</label>
-    <input type="number" name="newnumber" required
-           value="<?= isset($_POST['newnumber']) ? htmlspecialchars($_POST['newnumber']) : '' ?>">
-    <button type="submit">Calculate</button>
+  <form method="POST" onsubmit="return validateForm()">
+    <label>Previous Number (Kw):</label>
+    <input type="number" id="oldnum" name="oldnum" min="0" required
+           value="<?= isset($_POST['oldnum']) ? htmlspecialchars($_POST['oldnum']) : '' ?>">
+    <label>Current Number (Kw):</label>
+    <input type="number" id="newnum" name="newnum" min="0" required
+           value="<?= isset($_POST['newnum']) ? htmlspecialchars($_POST['newnum']) : '' ?>">
+    <button type="submit" name="calculate" value="1">Calculate Bill</button>
   </form>
 
   <?php
-  if (isset($_POST['ex1_submit'])) {
-    $oldnumber = floatval($_POST['oldnumber']);
-    $newnumber = floatval($_POST['newnumber']);
-    $last = $newnumber - $oldnumber;
-    echo "<div class='result-box'>";
-    echo "<strong>Previous number:</strong> {$oldnumber} Kw<br>";
-    echo "<strong>Current number:</strong> {$newnumber} Kw<br>";
-    if ($last < 0) {
-      echo "<span class='error'>❌ Error: New number must be greater than old number.</span>";
-    } else {
-      echo "<strong>Used this month:</strong> {$last} Kw<br>";
-      echo "<hr style='margin:8px 0; border-color:#ddd'>";
-      if ($last <= 10)      $total = $last * 700;
-      elseif ($last <= 20)  $total = $last * 800;
-      elseif ($last <= 30)  $total = $last * 900;
-      else                  $total = $last * 1000;
-      $formatMoney = number_format($total, 2, ".", ",");
-      echo "<span class='total'>Total Payment: {$formatMoney} រៀល</span>";
-    }
+  if (isset($_POST['calculate'])) {
+    $oldnum = floatval($_POST['oldnum']);
+    $newnum = floatval($_POST['newnum']);
+    $last   = $newnum - $oldnum;
+    if ($last <= 10)     $total = $last * 700;
+    elseif ($last <= 20) $total = $last * 800;
+    elseif ($last <= 30) $total = $last * 900;
+    else                 $total = $last * 1000;
+    $formatMoney = number_format($total, 2, '.', ',');
+    echo "<div class='receipt'>";
+    echo "<strong>Previous Number:</strong> {$oldnum} Kw<br>";
+    echo "<strong>Current Number:</strong> {$newnum} Kw<br>";
+    echo "<strong>Usage This Month:</strong> {$last} Kw<br>";
+    echo "<hr style='margin:8px 0'>";
+    echo "<h3>Total Payment: {$formatMoney} ៛</h3>";
     echo "</div>";
   }
   ?>
 
   <div class="nav-buttons">
-    <a href="index.php">← Home</a>
-    <a href="exercise2.php">Exercise 2 →</a>
+    <a href="exercise1.php">← Exercise 1</a>
+    <a href="exercise3.php">Exercise 3 →</a>
   </div>
 </div>
+
+<script>
+  function validateForm() {
+    let oldnum = parseFloat(document.getElementById('oldnum').value);
+    let newnum = parseFloat(document.getElementById('newnum').value);
+    if (newnum < oldnum) {
+      alert("កំហុស៖ លេខថ្មីមិនអាចតូចជាងលេខចាស់បានទេ!");
+      return false;
+    }
+    return true;
+  }
+</script>
 
 </body>
 </html>
